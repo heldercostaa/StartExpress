@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
-const { uuid } = require("uuidv4");
+const { uuid, isUuid } = require("uuidv4");
 
 const app = express();
 
@@ -22,7 +22,17 @@ function logRequests(req, res, next) {
   console.timeEnd(logLabel);
 }
 
+function validateId(req, res, next) {
+  const { id } = req.params;
+
+  if (!isUuid(id))
+    return res.status(400).json({ error: "Invalid repository id." });
+
+  next();
+}
+
 app.use(logRequests);
+app.use("/repositories/:id", validateId);
 
 app.get("/repositories", (req, res) => {
   const { title, url, tech } = req.query;
@@ -65,8 +75,6 @@ app.put("/repositories/:id", (req, res) => {
   const { id } = req.params;
   const { title, url, techs } = req.body;
 
-  if (!id) return res.status(400).json({ error: "Missing required param." });
-
   const repoIdx = repositories.findIndex((repo) => repo.id === id);
   if (repoIdx < 0)
     return res.status(400).json({ error: "Repository not found." });
@@ -84,7 +92,6 @@ app.put("/repositories/:id", (req, res) => {
 
 app.delete("/repositories/:id", (req, res) => {
   const { id } = req.params;
-  if (!id) return res.status(400).json({ error: "Missing required param." });
 
   const repoIdx = repositories.findIndex((repo) => repo.id === id);
   if (repoIdx < 0)
@@ -97,7 +104,6 @@ app.delete("/repositories/:id", (req, res) => {
 
 app.post("/repositories/:id/like", (req, res) => {
   const { id } = req.params;
-  if (!id) return res.status(400).json({ error: "Missing required param." });
 
   const repoIdx = repositories.findIndex((repo) => repo.id === id);
   if (repoIdx < 0)
