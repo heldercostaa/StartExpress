@@ -34,7 +34,29 @@ app.post("/repositories", (req, res) => {
 });
 
 app.put("/repositories/:id", (req, res) => {
-  // TODO
+  const { id } = req.params;
+  const { title, url, techs } = req.body;
+
+  if (!(id && title && url && techs))
+    return res.status(400).json({ error: "Missing required param." });
+
+  const repoIdx = repositories.findIndex((repo) => repo.id === id);
+
+  if (repoIdx < 0)
+    return res.status(400).json({ error: "Repository not found." });
+
+  const likes = repositories[repoIdx].likes;
+  const repository = {
+    id,
+    title,
+    url,
+    techs,
+    likes,
+  };
+
+  repositories[repoIdx] = repository;
+
+  return res.json(repository);
 });
 
 app.delete("/repositories/:id", (req, res) => {
