@@ -1,7 +1,7 @@
 {
   "name": "start-express",
   "version": "1.0.0",
-  "description": "A basic starting project using node and express.",
+  "description": "A basic starting project using node, express and jest.",
   "main": "src/server.js",
   "license": "MIT",
   "scripts": {
