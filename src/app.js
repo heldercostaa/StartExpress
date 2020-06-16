@@ -17,7 +17,7 @@ app.get("/repositories", (req, res) => {
 app.post("/repositories", (req, res) => {
   const { title, url, techs } = req.body;
 
-  if (!(title || url || techs))
+  if (!(title && url && techs))
     return res.status(400).json({ error: "Missing required params." });
 
   const repository = {
